@@ -2,6 +2,7 @@ using FluentValidation.Results;
 using TechLibrary.Api.Domain.Entities;
 using TechLibrary.Api.Infraestructure;
 using TechLibrary.Api.Infraestructure.Security.Cryptography;
+using TechLibrary.Api.Infraestructure.Security.Tokens.Access;
 using TechLibrary.Communication.Requests;
 using TechLibrary.Communication.Responses;
 using TechLibrary.Exception;
@@ -35,10 +36,13 @@ public class RegisterUserUseCase
         // Executando a query
         dbContext.SaveChanges();
 
+        // Instânciando o token generator
+        var tokenGenerator = new JwtTokenGenerator();
+
         return new UserRegisteredResponse
         {
             Name = entity.Name,
-            AccessToken = "token"
+            AccessToken = tokenGenerator.Generate(entity) // Gerando um token para o usuário
         };
     }
     
