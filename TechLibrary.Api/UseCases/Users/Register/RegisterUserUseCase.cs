@@ -1,5 +1,6 @@
 using TechLibrary.Api.Domain.Entities;
 using TechLibrary.Api.Infraestructure;
+using TechLibrary.Api.Infraestructure.Security.Cryptography;
 using TechLibrary.Communication.Requests;
 using TechLibrary.Communication.Responses;
 using TechLibrary.Exception;
@@ -14,12 +15,15 @@ public class RegisterUserUseCase
         // Validando os dados da requisição
         Validate(request);
         
+        // Instânciando BCrypt
+        var cryptography = new BCryptAlgorithm();
+        
         // Criando a entidade
         var entity = new User
         {
             Name = request.Name,
             Email = request.Email,
-            Password = request.Password,
+            Password = cryptography.HashPassword(request.Password), // Criptografando a senha do usuário
         };
         
         // Instânciando o banco de dados
