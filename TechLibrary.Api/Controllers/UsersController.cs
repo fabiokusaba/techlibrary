@@ -13,7 +13,7 @@ public class UsersController : ControllerBase
     [HttpPost]
     [ProducesResponseType(typeof(UserRegisteredResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ErrorMessagesResponse), StatusCodes.Status400BadRequest)]
-    public IActionResult Create(UserRequest request)
+    public IActionResult Register(UserRequest request)
     {
         // Dentro do try estou tentando executar algo
         try
