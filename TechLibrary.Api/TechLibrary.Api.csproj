@@ -16,4 +16,8 @@
       <Folder Include="Controllers\" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\TechLibrary.Communication\TechLibrary.Communication.csproj" />
+    </ItemGroup>
+
 </Project>
