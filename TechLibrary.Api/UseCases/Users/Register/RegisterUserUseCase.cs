@@ -1,3 +1,4 @@
+using FluentValidation.Results;
 using TechLibrary.Api.Domain.Entities;
 using TechLibrary.Api.Infraestructure;
 using TechLibrary.Api.Infraestructure.Security.Cryptography;
@@ -12,8 +13,11 @@ public class RegisterUserUseCase
 {
     public UserRegisteredResponse Execute(UserRequest request)
     {
+        // Instânciando o banco de dados
+        var dbContext = new TechLibraryDbContext();
+        
         // Validando os dados da requisição
-        Validate(request);
+        Validate(request, dbContext);
         
         // Instânciando BCrypt
         var cryptography = new BCryptAlgorithm();
@@ -26,9 +30,6 @@ public class RegisterUserUseCase
             Password = cryptography.HashPassword(request.Password), // Criptografando a senha do usuário
         };
         
-        // Instânciando o banco de dados
-        var dbContext = new TechLibraryDbContext();
-        
         // Acessando a tabela e inserindo um registro -> preparando a query
         dbContext.Users.Add(entity);
         // Executando a query
@@ -37,14 +38,21 @@ public class RegisterUserUseCase
         return new UserRegisteredResponse
         {
             Name = entity.Name,
+            AccessToken = "token"
         };
     }
     
-    private void Validate(UserRequest request)
+    private void Validate(UserRequest request, TechLibraryDbContext dbContext)
     {
         var validator = new RegisterUserValidator();
         
         var result = validator.Validate(request);
+        
+        // Validando emails duplicados
+        // Na tabela Users estou verificando se existe qualquer usuário com o mesmo email que recebi da request
+        var existUserWithEmail = dbContext.Users.Any(user => user.Email.Equals(request.Email));
+        if (existUserWithEmail)
+            result.Errors.Add(new ValidationFailure("Email", "Email já registrado na plataforma."));
 
         if (result.IsValid == false)
         {
