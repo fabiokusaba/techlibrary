@@ -8,6 +8,7 @@ public class TechLibraryDbContext : DbContext
 {
     // Referência para tabelas
     public DbSet<User> Users { get; set; }
+    public DbSet<Book> Books { get; set; }
     
     // Conexão com o banco de dados SQLite
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
